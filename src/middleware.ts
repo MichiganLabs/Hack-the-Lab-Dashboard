@@ -1,9 +1,9 @@
+import { authMiddleware } from '@clerk/nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
 import { AppConfig } from './utils/AppConfig';
-import { authMiddleware } from '@clerk/nextjs';
 
 const intlMiddleware = createMiddleware({
   locales: AppConfig.locales,

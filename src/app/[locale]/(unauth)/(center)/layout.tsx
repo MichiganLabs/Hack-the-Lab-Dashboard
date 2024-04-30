@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -7,9 +6,9 @@ export default function CenteredLayout({
 }: {
   children: React.ReactNode;
 }) {
-    redirect('/dashboard');
+  redirect('/dashboard');
 
- /*  const { userId } = auth();
+  /*  const { userId } = auth();
 
   if (userId) {
     redirect('/dashboard');

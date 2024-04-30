@@ -2,7 +2,6 @@
 
 'use client';
 
-import { RefreshCwIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -17,7 +16,6 @@ import {
 } from '@/components/ui/table';
 
 import ConfirmDeleteDialog from './ConfirmDeleteDialog';
-import CreateUserDialog from './CreateUserDialog';
 import EditUserDialog from './EditUserDialog';
 import useUserList from './useUserList';
 
@@ -36,7 +34,7 @@ export default function UserList() {
     userList.getUsers({ dashboard: true });
   }, [userList.currentPage]);
 
-  //const data = (userList.data as any)?.data;
+  // const data = (userList.data as any)?.data;
 
   const data = [
     {
@@ -49,30 +47,28 @@ export default function UserList() {
       username: 'user',
       userType: 'Participant',
     },
-  ]
+  ];
 
-  //const totalCount = (userList.data as any)?.totalCount;
-  //const totalPages = Math.ceil(parseInt(`${totalCount}`, 10) / 10);
+  // const totalCount = (userList.data as any)?.totalCount;
+  // const totalPages = Math.ceil(parseInt(`${totalCount}`, 10) / 10);
   const [open, setOpen] = useState(false);
   const [updatedItem, setUpdatedItem] = useState<any>({});
 
   return (
     <div>
-      <div className="my-1 flex flex-row flex-wrap items-center gap-1">
-        
-      </div>
+      <div className="my-1 flex flex-row flex-wrap items-center gap-1" />
       <EditUserDialog
         open={open}
-        setOpen={(value: boolean) => { setOpen(value); }}
+        setOpen={(value: boolean) => {
+          setOpen(value);
+        }}
         initialValues={updatedItem}
         updateUser={userList.updateUser}
       >
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="flex items-center justify-center">
-                
-              </TableHead>
+              <TableHead className="flex items-center justify-center" />
               <TableHead>ID</TableHead>
               <TableHead>Role</TableHead>
               <TableHead />

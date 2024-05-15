@@ -24,19 +24,19 @@ const MazeGrid = ({
       let color;
       switch (cellType) {
         case "Wall":
-          color = "black";
+          color = "#020712";
           break;
         case "Open":
-          color = "grey";
+          color = "#415572";
           break;
         case "Cheese":
-          color = "yellow";
+          color = "#c7da53";
           break;
         case "Exit":
-          color = "green";
+          color = "#00ff79";
           break;
         case "Start":
-          color = "blue";
+          color = "#8bbcf8";
           break;
         default:
           color = "white"; // Default color for unknown types

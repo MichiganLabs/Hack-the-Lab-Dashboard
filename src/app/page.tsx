@@ -12,10 +12,21 @@ import {
 import oneTurn from "./oneTurn.json";
 import straightMaze from "./straightMaze.json";
 import { useResizeDetector } from "react-resize-detector";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { MoveList } from "@/components/MoveList";
 
 const Home = () => {
   const [mazeData, setMazeData] = React.useState<any>(straightMaze);
-  const { width, height, ref } = useResizeDetector();
+  const {
+    width: mazeWidth,
+    height: mazeHeight,
+    ref: mazeRef,
+  } = useResizeDetector();
+  const {
+    width: movesWidth,
+    height: movesHeight,
+    ref: movesRef,
+  } = useResizeDetector();
 
   const handleSelectChange = (value: any) => {
     switch (value) {
@@ -30,8 +41,12 @@ const Home = () => {
   };
 
   const cellSize = Math.min(
-    width ? width / mazeData.dimensions.horizontal : 0,
-    height ? height / mazeData.dimensions.vertical : 0
+    mazeWidth ? mazeWidth / mazeData.dimensions.horizontal : 0,
+    mazeHeight ? mazeHeight / mazeData.dimensions.vertical : 0
+  );
+  const cellSize1 = Math.min(
+    movesWidth ? movesWidth / mazeData.dimensions.horizontal : 0,
+    movesHeight ? movesHeight / mazeData.dimensions.vertical : 0
   );
   return (
     <div className="flex flex-col h-screen">
@@ -57,15 +72,32 @@ const Home = () => {
           </Select>
         </div>
       </header>
-      <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-8 h-[calc(100%-6rem)]">
-        <div
-          className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 w-full max-w-4xl h-full"
-          ref={ref}
-        >
-          <div className="flex justify-center items-center w-full">
-            <MazeGrid mazeData={mazeData} cellSize={cellSize} />
-          </div>
-        </div>
+      <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
+        <PanelGroup direction="horizontal">
+          <Panel id="maze" minSize={25} order={1}>
+            <div
+              className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
+              ref={mazeRef}
+            >
+              <div className="flex justify-center items-center w-full">
+                <MazeGrid mazeData={mazeData} cellSize={cellSize} />
+              </div>
+            </div>
+          </Panel>
+          <PanelResizeHandle
+            className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
+          />
+          <Panel id="moves" order={2}>
+            <div
+              className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
+              ref={movesRef}
+            >
+              <div className="flex justify-center items-center w-full">
+                <MoveList />
+              </div>
+            </div>
+          </Panel>
+        </PanelGroup>
       </main>
     </div>
   );

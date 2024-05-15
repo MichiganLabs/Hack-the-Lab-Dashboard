@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/select";
 import oneTurn from "./oneTurn.json";
 import straightMaze from "./straightMaze.json";
+import { useResizeDetector } from "react-resize-detector";
 
 const Home = () => {
   const [mazeData, setMazeData] = React.useState<any>(straightMaze);
-  const cellSize = 40;
+  const { width, height, ref } = useResizeDetector();
 
   const handleSelectChange = (value: any) => {
     switch (value) {
@@ -28,11 +29,15 @@ const Home = () => {
     }
   };
 
+  const cellSize = Math.min(
+    width ? width / mazeData.dimensions.horizontal : 0,
+    height ? height / mazeData.dimensions.vertical : 0
+  );
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between">
+      <header className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between flex-col md:flex-row gap-4">
         <h1 className="text-2xl font-bold">Maze Dashboard</h1>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 flex-col md:flex-row gap-4">
           <div className="relative">
             <input
               className="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
@@ -52,9 +57,12 @@ const Home = () => {
           </Select>
         </div>
       </header>
-      <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center">
-        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 w-full max-w-4xl">
-          <div className="flex justify-center">
+      <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-8 h-[calc(100%-6rem)]">
+        <div
+          className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 w-full max-w-4xl h-full"
+          ref={ref}
+        >
+          <div className="flex justify-center items-center w-full">
             <MazeGrid mazeData={mazeData} cellSize={cellSize} />
           </div>
         </div>

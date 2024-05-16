@@ -24,7 +24,7 @@ export enum CellType {
   Open = "Open",
   Wall = "Wall",
   Cheese = "Cheese",
-  Entrance = "Entrance",
+  Entrance = "Start",
   Exit = "Exit",
 }
 

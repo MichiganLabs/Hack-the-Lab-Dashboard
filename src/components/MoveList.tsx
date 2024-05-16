@@ -15,7 +15,7 @@ function TableItem(props: Action) {
         backgroundColor: props.success ? "#1f2937" : "#7f1c1d",
       }}
     >
-      <TableCell>
+      <TableCell className="rounded-l-md">
         <span
           style={{ backgroundColor: CategoryColor[props.actionType] }}
           className={`px-2 py-1 rounded-md text-black`}
@@ -24,7 +24,7 @@ function TableItem(props: Action) {
         </span>
       </TableCell>
       <TableCell>
-        {props.position.x}:{props.position.x}
+        {props.position.x}:{props.position.y}
       </TableCell>
       <TableCell className="rounded-r-md">{`${props.success}`}</TableCell>
     </TableRow>

@@ -7,15 +7,25 @@ const MazeCell = ({
   x,
   y,
   type,
+  traversedInstances,
 }: {
   color: string;
   size: number;
   x: number;
   y: number;
   type: string;
+  traversedInstances: any;
 }) => {
   return (
-    <div>
+    <div
+      style={{
+        position: "relative",
+        flex: 1,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div
         data-tooltip-id={`cell-${x}-${y}`}
         style={{
@@ -26,6 +36,42 @@ const MazeCell = ({
         }}
         className="rounded-md"
       />
+      {traversedInstances.length > 0 ? (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${traversedInstances.length}, 1fr)`,
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            zIndex: 1,
+          }}
+        >
+          {traversedInstances.map((instance: any, index: number) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                position: "relative",
+              }}
+            >
+              <div
+                style={{
+                  width: "80%",
+                  aspectRatio: "1/1",
+                  borderRadius: "50%",
+                  backgroundColor: instance.traversalColor,
+                  border: "1px solid black",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      ) : null}
       <ReactTooltip id={`cell-${x}-${y}`} place="top">
         {x}:{y} {type}
       </ReactTooltip>

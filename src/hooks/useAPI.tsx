@@ -4,11 +4,15 @@ import { Action, Maze } from "@/types/maze";
 import { toast } from "@/components/ui/use-toast";
 
 const useAPI = () => {
-  const [baseUrl, setBaseUrl] = useState("");
-  const [apiKey, setApiKey] = useState<string>(
-    "ae28c592c7964ce2afb3b38eb11f916e"
+  const [baseUrl, setBaseUrl] = useState<string>(
+    localStorage.getItem("baseUrl") || ""
   );
-  const [selectedMaze, setSelectedMaze] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>(
+    localStorage.getItem("apiKey") || ""
+  );
+  const [selectedMaze, setSelectedMaze] = useState<string>(
+    localStorage.getItem("selectedMaze") || ""
+  );
   const [data, setData] = useState<Action[]>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [loading, setLoading] = useState(false);
@@ -25,14 +29,17 @@ const useAPI = () => {
   };
 
   const updateSelectedMaze = (maze: string) => {
+    localStorage.setItem("selectedMaze", maze);
     setSelectedMaze(maze);
   };
 
   const updateBaseUrl = (url: string) => {
+    localStorage.setItem("baseUrl", url);
     setBaseUrl(url);
   };
 
   const updateApiKey = (key: string) => {
+    localStorage.setItem("apiKey", key);
     setApiKey(key);
   };
 
@@ -70,17 +77,9 @@ const useAPI = () => {
         },
       });
       setData([
-        ...response.data.actions,
-        ...response.data.actions,
-        ...response.data.actions,
-        ,
-        ...response.data.actions,
-        ,
-        ...response.data.actions,
-        ,
-        ...response.data.actions,
-        ,
-        ...response.data.actions,
+        ...response.data.actions.sort(
+          (a: Action, b: Action) => parseInt(a.actionId) - parseInt(b.actionId)
+        ),
       ]);
     } catch (error: any) {
       setData([]);

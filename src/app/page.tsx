@@ -23,10 +23,6 @@ const Home = () => {
     ref: mazeRef,
   } = useResizeDetector();
 
-  useEffect(() => {
-    api.updateBaseUrl("http://192.168.6.119:8080/v1");
-  }, []);
-
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between flex-col md:flex-row gap-4">
@@ -53,7 +49,10 @@ const Home = () => {
               onChange={(e) => api.updateBaseUrl(e.target.value)}
             />
           </div>
-          <Select onValueChange={api.updateSelectedMaze}>
+          <Select
+            onValueChange={api.updateSelectedMaze}
+            defaultValue={api.selectedMaze || undefined}
+          >
             <SelectTrigger className="bg-gray-800 w-48 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <SelectValue placeholder="Select Maze" />
             </SelectTrigger>
@@ -63,10 +62,13 @@ const Home = () => {
             </SelectContent>
           </Select>
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            className={`text-white px-4 py-2 rounded-md ${
+              !api.selectedMaze ? "bg-gray-500" : "bg-blue-500"
+            }`}
             onClick={() => {
               api.refreshData();
             }}
+            disabled={!api.selectedMaze}
           >
             Refresh
           </button>
@@ -85,6 +87,7 @@ const Home = () => {
                     mazeData={api.mazeData}
                     mazeHeight={mazeHeight}
                     mazeWidth={mazeWidth}
+                    moveData={api.data}
                   />
                 ) : null}
               </div>

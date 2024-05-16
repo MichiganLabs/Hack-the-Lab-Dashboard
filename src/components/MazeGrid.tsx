@@ -1,13 +1,15 @@
 import React from "react";
 import MazeCell from "./MazeCell";
-import { Maze } from "@/types/maze";
+import { Action, ActionType, CategoryColor, Maze } from "@/types/maze.d";
 
 const MazeGrid = ({
   mazeData,
+  moveData,
   mazeWidth,
   mazeHeight,
 }: {
   mazeData: Maze;
+  moveData?: Action[];
   mazeWidth: number;
   mazeHeight: number;
 }) => {
@@ -29,7 +31,6 @@ const MazeGrid = ({
           c.coordinates.x === x && c.coordinates.y === y
       );
       const cellType = cell ? cell.type : "Empty"; // Default to 'Empty' if no cell is found
-
       let color;
       switch (cellType) {
         case "Wall":
@@ -44,11 +45,11 @@ const MazeGrid = ({
         case "Exit":
           color = "#00ff79";
           break;
-        case "Entrance":
+        case "Start":
           color = "#8bbcf8";
           break;
         default:
-          color = "white"; // Default color for unknown types
+          color = "white";
           break;
       }
 
@@ -65,16 +66,28 @@ const MazeGrid = ({
         gap: "1px",
       }}
     >
-      {grid.map((cell, index) => (
-        <MazeCell
-          key={index}
-          color={cell.color}
-          size={cellSize}
-          x={cell.x}
-          y={cell.y}
-          type={cell.cellType}
-        />
-      ))}
+      {grid.map((cell, index) => {
+        const traversedInstances =
+          moveData
+            ?.filter(
+              (move) => move.position.x === cell.x && move.position.y === cell.y
+            )
+            .map((move) => ({
+              ...move,
+              traversalColor: CategoryColor[move.actionType as ActionType],
+            })) ?? [];
+        return (
+          <MazeCell
+            key={index}
+            color={cell.color}
+            size={cellSize}
+            x={cell.x}
+            y={cell.y}
+            type={cell.cellType}
+            traversedInstances={traversedInstances}
+          />
+        );
+      })}
     </div>
   );
 };

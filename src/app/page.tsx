@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SVGProps } from "react";
+import React, { SVGProps, useEffect } from "react";
 import MazeGrid from "../components/MazeGrid";
 import {
   Select,
@@ -9,59 +9,51 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import oneTurn from "./oneTurn.json";
-import straightMaze from "./straightMaze.json";
 import { useResizeDetector } from "react-resize-detector";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { MoveList } from "@/components/MoveList";
+import useAPI from "@/hooks/useAPI";
+import { Toaster } from "@/components/ui/toaster";
 
 const Home = () => {
-  const [mazeData, setMazeData] = React.useState<any>(straightMaze);
+  const api = useAPI();
   const {
     width: mazeWidth,
     height: mazeHeight,
     ref: mazeRef,
   } = useResizeDetector();
-  const {
-    width: movesWidth,
-    height: movesHeight,
-    ref: movesRef,
-  } = useResizeDetector();
 
-  const handleSelectChange = (value: any) => {
-    switch (value) {
-      case "oneTurn":
-        setMazeData(oneTurn);
-        break;
-      case "straightMaze":
-      default:
-        setMazeData(straightMaze);
-        break;
-    }
-  };
+  useEffect(() => {
+    api.updateBaseUrl("http://192.168.6.119:8080/v1");
+  }, []);
 
-  const cellSize = Math.min(
-    mazeWidth ? mazeWidth / mazeData.dimensions.horizontal : 0,
-    mazeHeight ? mazeHeight / mazeData.dimensions.vertical : 0
-  );
-  const cellSize1 = Math.min(
-    movesWidth ? movesWidth / mazeData.dimensions.horizontal : 0,
-    movesHeight ? movesHeight / mazeData.dimensions.vertical : 0
-  );
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between flex-col md:flex-row gap-4">
-        <h1 className="text-2xl font-bold">Maze Dashboard</h1>
-        <div className="flex items-center space-x-4 flex-col md:flex-row gap-4">
+        <h1 className="text-2xl font-bold">Maze</h1>
+        <div className="flex items-center space-x-4 flex-col md:flex-row gap-4 md:gap-0">
           <div className="relative">
             <input
-              className="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
+              className="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter API Token"
+              value={api.apiKey}
               type="text"
+              onChange={(e) => api.updateApiKey(e.target.value)}
             />
-            <KeyIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            {api.apiKey ? null : (
+              <KeyIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            )}
           </div>
-          <Select onValueChange={handleSelectChange}>
+          <div className="relative">
+            <input
+              className="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Base URL"
+              value={api.baseUrl}
+              type="text"
+              onChange={(e) => api.updateBaseUrl(e.target.value)}
+            />
+          </div>
+          <Select onValueChange={api.updateSelectedMaze}>
             <SelectTrigger className="bg-gray-800 w-48 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <SelectValue placeholder="Select Maze" />
             </SelectTrigger>
@@ -70,6 +62,14 @@ const Home = () => {
               <SelectItem value="oneTurn">One Turn</SelectItem>
             </SelectContent>
           </Select>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            onClick={() => {
+              api.refreshData();
+            }}
+          >
+            Refresh
+          </button>
         </div>
       </header>
       <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
@@ -80,25 +80,29 @@ const Home = () => {
               ref={mazeRef}
             >
               <div className="flex justify-center items-center w-full">
-                <MazeGrid mazeData={mazeData} cellSize={cellSize} />
+                {api.mazeData && mazeHeight && mazeWidth ? (
+                  <MazeGrid
+                    mazeData={api.mazeData}
+                    mazeHeight={mazeHeight}
+                    mazeWidth={mazeWidth}
+                  />
+                ) : null}
               </div>
             </div>
           </Panel>
           <PanelResizeHandle
             className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
           />
-          <Panel id="moves" order={2}>
-            <div
-              className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
-              ref={movesRef}
-            >
+          <Panel id="moves" minSize={25} order={2}>
+            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
               <div className="flex justify-center items-center w-full">
-                <MoveList />
+                {api.data ? <MoveList tableData={api.data} /> : null}
               </div>
             </div>
           </Panel>
         </PanelGroup>
       </main>
+      <Toaster />
     </div>
   );
 };

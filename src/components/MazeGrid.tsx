@@ -1,16 +1,25 @@
-// components/MazeGrid.js
 import React from "react";
 import MazeCell from "./MazeCell";
+import { Maze } from "@/types/maze";
 
 const MazeGrid = ({
   mazeData,
-  cellSize,
+  mazeWidth,
+  mazeHeight,
 }: {
-  mazeData: any;
-  cellSize: number;
+  mazeData: Maze;
+  mazeWidth: number;
+  mazeHeight: number;
 }) => {
+  if (!mazeData || !mazeData.cells || !mazeData.dimensions) {
+    return null;
+  }
   const { cells, cheese, exit, start, dimensions } = mazeData;
   const { horizontal, vertical } = dimensions;
+  const cellSize = Math.min(
+    mazeWidth ? mazeWidth / (horizontal || 0) : 0,
+    mazeHeight ? mazeHeight / (vertical || 0) : 0
+  );
 
   const grid = [];
   for (let y = 0; y < vertical; y++) {
@@ -35,7 +44,7 @@ const MazeGrid = ({
         case "Exit":
           color = "#00ff79";
           break;
-        case "Start":
+        case "Entrance":
           color = "#8bbcf8";
           break;
         default:

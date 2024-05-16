@@ -57,8 +57,11 @@ const Home = () => {
               <SelectValue placeholder="Select Maze" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="straightMaze">Straight Maze</SelectItem>
-              <SelectItem value="oneTurn">One Turn</SelectItem>
+              {api.mazes.map((maze) => (
+                <SelectItem key={maze} value={maze}>
+                  {maze}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <button
@@ -99,7 +102,9 @@ const Home = () => {
           <Panel id="moves" minSize={25} order={2}>
             <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
               <div className="flex justify-center items-center w-full">
-                {api.data ? <MoveList tableData={api.data} /> : null}
+                {api.data ? (
+                  <MoveList tableData={api.data} resetMaze={api.resetMaze} />
+                ) : null}
               </div>
             </div>
           </Panel>

@@ -13,9 +13,14 @@ const useAPI = () => {
   const [selectedMaze, setSelectedMaze] = useState<string>(
     localStorage.getItem("selectedMaze") || ""
   );
+  const [mazes, setMazes] = useState<string[]>([]);
   const [data, setData] = useState<Action[]>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchMazes();
+  }, []);
 
   useEffect(() => {
     if (selectedMaze !== "" && baseUrl !== "" && apiKey !== "") {
@@ -43,6 +48,30 @@ const useAPI = () => {
     setApiKey(key);
   };
 
+  const resetMaze = async () => {
+    try {
+      setLoading(true);
+      const response = await axios({
+        url: `${baseUrl}/rat/reset`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": apiKey,
+        },
+        data: {
+          mazeId: selectedMaze,
+        },
+      });
+      await refreshData();
+    } catch (error: any) {
+      toast({
+        description: `${error}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchMazeData = async () => {
     try {
       setLoading(true);
@@ -57,6 +86,28 @@ const useAPI = () => {
       setMazeData(response.data);
     } catch (error: any) {
       setMazeData({} as Maze);
+      toast({
+        description: `${error}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMazes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios({
+        url: `${baseUrl}/mazes`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": apiKey,
+        },
+      });
+      setMazes(response.data);
+    } catch (error: any) {
+      setMazes([]);
       toast({
         description: `${error}`,
       });
@@ -104,6 +155,8 @@ const useAPI = () => {
     selectedMaze,
     updateSelectedMaze,
     refreshData,
+    mazes,
+    resetMaze,
   };
 };
 

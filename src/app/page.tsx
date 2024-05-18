@@ -27,10 +27,26 @@ const Home = () => {
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between flex-col md:flex-row gap-4">
         <h1 className="text-2xl font-bold">Maze</h1>
-        <div className="flex items-center space-x-4 flex-col md:flex-row gap-4 md:gap-0">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:flex justify-between items-center gap-4 lg:gap-1">
+          <div className={`text-white px-4 py-2 rounded-md text-nowrap`}>
+            {api.me.name}
+          </div>
+          {api.me.role ? (
+            <div
+              className={`flex justify-center items-center py-2 rounded-md w-32 ${
+                api.me.role === "ADMIN"
+                  ? "bg-red-500"
+                  : api.me.role === "DEVELOPER"
+                  ? "bg-yellow-500"
+                  : "bg-green-500"
+              }`}
+            >
+              {api.me.role}
+            </div>
+          ) : null}
           <div className="relative">
             <input
-              className="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="bg-gray-800 w-44 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter API Token"
               value={api.apiKey}
               type="text"
@@ -42,7 +58,7 @@ const Home = () => {
           </div>
           <div className="relative">
             <input
-              className="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="bg-gray-800 w-44 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Base URL"
               value={api.baseUrl}
               type="text"
@@ -65,15 +81,14 @@ const Home = () => {
             </SelectContent>
           </Select>
           <button
-            className={`text-white px-4 py-2 rounded-md ${
+            className={`text-white px-4 py-2 rounded-md w-24 ${
               !api.selectedMaze ? "bg-gray-500" : "bg-blue-500"
             }`}
             onClick={() => {
               api.refreshData();
             }}
-            disabled={!api.selectedMaze}
           >
-            Refresh
+            Update
           </button>
         </div>
       </header>

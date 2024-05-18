@@ -13,13 +13,19 @@ const useAPI = () => {
   const [selectedMaze, setSelectedMaze] = useState<string>(
     localStorage.getItem("selectedMaze") || ""
   );
+  const [me, setMe] = useState<{
+    name: string;
+    role: string;
+  }>({ name: "", role: "" });
   const [mazes, setMazes] = useState<string[]>([]);
   const [data, setData] = useState<Action[]>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchMazes();
+    if (selectedMaze !== "" && baseUrl !== "" && apiKey !== "") {
+      refreshData();
+    }
   }, []);
 
   useEffect(() => {
@@ -31,6 +37,8 @@ const useAPI = () => {
   const refreshData = async () => {
     await fetchMazeData();
     await fetchData();
+    await fetchMazes();
+    await fetchMe();
   };
 
   const updateSelectedMaze = (maze: string) => {
@@ -46,6 +54,27 @@ const useAPI = () => {
   const updateApiKey = (key: string) => {
     localStorage.setItem("apiKey", key);
     setApiKey(key);
+  };
+
+  const fetchMe = async () => {
+    try {
+      setLoading(true);
+      const response = await axios({
+        url: `${baseUrl}/me`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": apiKey,
+        },
+      });
+      setMe({ ...response.data });
+    } catch (error: any) {
+      toast({
+        description: `${error}`,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetMaze = async () => {
@@ -157,6 +186,7 @@ const useAPI = () => {
     refreshData,
     mazes,
     resetMaze,
+    me,
   };
 };
 

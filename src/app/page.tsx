@@ -100,7 +100,10 @@ const Home = () => {
               ref={mazeRef}
             >
               <div className="flex justify-center items-center w-full">
-                {api.mazeData && mazeHeight && mazeWidth ? (
+                {api.mazeData &&
+                mazeHeight &&
+                mazeWidth &&
+                api.mazeData.dimensions ? (
                   <MazeGrid
                     mazeData={api.mazeData}
                     mazeHeight={mazeHeight}

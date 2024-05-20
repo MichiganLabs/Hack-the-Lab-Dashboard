@@ -79,4 +79,4 @@ const MazeCell = ({
   );
 };
 
-export default MazeCell;
+export default React.memo(MazeCell);

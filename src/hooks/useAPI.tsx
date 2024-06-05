@@ -21,6 +21,14 @@ const useAPI = () => {
   const [data, setData] = useState<Action[]>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [loading, setLoading] = useState(false);
+  const [participantMazeData, setParticipantMazeData] = useState<
+    {
+      id: number;
+      name: string;
+      role: string;
+      data: Action[];
+    }[]
+  >([]);
 
   useEffect(() => {
     if (selectedMaze !== "" && baseUrl !== "" && apiKey !== "") {
@@ -39,6 +47,9 @@ const useAPI = () => {
     await fetchData();
     await fetchMazes();
     await fetchMe();
+    if (me.role === "ADMIN") {
+      await fetchAllParticipantData();
+    }
   };
 
   const updateSelectedMaze = (maze: string) => {
@@ -99,6 +110,31 @@ const useAPI = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchParticipants = async (): Promise<
+    { id: number; name: string; role: string }[]
+  > => {
+    let participants: { id: number; name: string; role: string }[] = [];
+    try {
+      setLoading(true);
+      const response = await axios({
+        url: `${baseUrl}/participants`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": apiKey,
+        },
+      });
+      participants = [...response.data];
+    } catch (error: any) {
+      toast({
+        description: `${error}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+    return participants;
   };
 
   const fetchMazeData = async () => {
@@ -171,6 +207,49 @@ const useAPI = () => {
     }
   };
 
+  const fetchPlayerData = async (playerId: string): Promise<Action[]> => {
+    let playerData: Action[] = [];
+    try {
+      setLoading(true);
+      const response = await axios({
+        url: `${baseUrl}/maze/${selectedMaze}/actions/${playerId}`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": apiKey,
+        },
+      });
+      playerData = [
+        ...response.data.actions.sort(
+          (a: Action, b: Action) => parseInt(a.actionId) - parseInt(b.actionId)
+        ),
+      ];
+    } catch (error: any) {
+      toast({
+        description: `${error}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+    return playerData;
+  };
+
+  const fetchAllParticipantData = async () => {
+    const participants = await fetchParticipants();
+    const localParticipantData: {
+      id: number;
+      name: string;
+      role: string;
+      data: Action[];
+    }[] = await Promise.all(
+      participants.map(async (participant) => {
+        const data = await fetchPlayerData(`${participant.id}`);
+        return { data: [...data], ...participant };
+      })
+    );
+    setParticipantMazeData([...localParticipantData]);
+  };
+
   return {
     data,
     loading,
@@ -187,6 +266,8 @@ const useAPI = () => {
     mazes,
     resetMaze,
     me,
+    fetchAllParticipantData,
+    participantMazeData,
   };
 };
 

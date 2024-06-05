@@ -14,11 +14,13 @@ const MazeGrid = ({
   moveData,
   mazeWidth,
   mazeHeight,
+  hideTooltip,
 }: {
   mazeData: Maze;
   moveData?: Action[];
   mazeWidth: number;
   mazeHeight: number;
+  hideTooltip?: boolean;
 }) => {
   const { cells, cheese, exit, start, dimensions } = mazeData;
   const { horizontal, vertical } = dimensions;
@@ -112,6 +114,7 @@ const MazeGrid = ({
             y={cell.y}
             type={cell.cellType}
             traversedInstances={traversedInstances}
+            hideTooltip={hideTooltip}
           />
         );
       })}

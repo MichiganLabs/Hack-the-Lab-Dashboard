@@ -8,6 +8,7 @@ const MazeCell = ({
   y,
   type,
   traversedInstances,
+  hideTooltip,
 }: {
   color: string;
   size: number;
@@ -15,6 +16,7 @@ const MazeCell = ({
   y: number;
   type: string;
   traversedInstances: any;
+  hideTooltip?: boolean;
 }) => {
   return (
     <div
@@ -72,9 +74,11 @@ const MazeCell = ({
           ))}
         </div>
       ) : null}
-      <ReactTooltip id={`cell-${x}-${y}`} place="top">
-        {x}:{y} {type}
-      </ReactTooltip>
+      {hideTooltip ? null : (
+        <ReactTooltip id={`cell-${x}-${y}`} place="top">
+          {x}:{y} {type}
+        </ReactTooltip>
+      )}
     </div>
   );
 };

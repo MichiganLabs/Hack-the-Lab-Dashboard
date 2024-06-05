@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SVGProps, useEffect } from "react";
+import React, { SVGProps } from "react";
 import MazeGrid from "../components/MazeGrid";
 import {
   Select,
@@ -14,6 +14,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { MoveList } from "@/components/MoveList";
 import useAPI from "@/hooks/useAPI";
 import { Toaster } from "@/components/ui/toaster";
+import { AdminView } from "@/components/AdminView";
 
 const Home = () => {
   const api = useAPI();
@@ -93,40 +94,44 @@ const Home = () => {
         </div>
       </header>
       <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
-        <PanelGroup direction="horizontal">
-          <Panel id="maze" minSize={25} order={1}>
-            <div
-              className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
-              ref={mazeRef}
-            >
-              <div className="flex justify-center items-center w-full">
-                {api.mazeData &&
-                mazeHeight &&
-                mazeWidth &&
-                api.mazeData.dimensions ? (
-                  <MazeGrid
-                    mazeData={api.mazeData}
-                    mazeHeight={mazeHeight}
-                    mazeWidth={mazeWidth}
-                    moveData={api.data}
-                  />
-                ) : null}
+        {api.me.role === "ADMIN" ? (
+          <AdminView api={api} />
+        ) : (
+          <PanelGroup direction="horizontal">
+            <Panel id="maze" minSize={25} order={1}>
+              <div
+                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
+                ref={mazeRef}
+              >
+                <div className="flex justify-center items-center w-full">
+                  {api.mazeData &&
+                  mazeHeight &&
+                  mazeWidth &&
+                  api.mazeData.dimensions ? (
+                    <MazeGrid
+                      mazeData={api.mazeData}
+                      mazeHeight={mazeHeight}
+                      mazeWidth={mazeWidth}
+                      moveData={api.data}
+                    />
+                  ) : null}
+                </div>
               </div>
-            </div>
-          </Panel>
-          <PanelResizeHandle
-            className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
-          />
-          <Panel id="moves" minSize={25} order={2}>
-            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
-              <div className="flex justify-center items-center w-full">
-                {api.data ? (
-                  <MoveList tableData={api.data} resetMaze={api.resetMaze} />
-                ) : null}
+            </Panel>
+            <PanelResizeHandle
+              className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
+            />
+            <Panel id="moves" minSize={25} order={2}>
+              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
+                <div className="flex justify-center items-center w-full">
+                  {api.data ? (
+                    <MoveList tableData={api.data} resetMaze={api.resetMaze} />
+                  ) : null}
+                </div>
               </div>
-            </div>
-          </Panel>
-        </PanelGroup>
+            </Panel>
+          </PanelGroup>
+        )}
       </main>
       <Toaster />
     </div>

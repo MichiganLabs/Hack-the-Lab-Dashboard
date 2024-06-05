@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maze</title>
+  <style>
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(7, 50px);
+      grid-template-rows: repeat(7, 50px);
+      gap: 1px;
+      background-color: #eee;
+    }
+
+    .square {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wall {
+      background-color: #444;
+    }
+
+    .open {
+      background-color: #fff;
+    }
+
+    .cheese {
+      background-color: yellow;
+    }
+
+    .exit {
+      background-color: green;
+    }
+
+    .start {
+      background-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="maze" id="maze"></div>
+  <script src="./maze.js"></script>
+  <script>
+      const mazeElement = document.getElementById('maze');
+      mazeData.forEach(squareData => {
+        const squareElement = document.createElement('div');
+        squareElement.className = 'square ' + squareData.type.toLowerCase();
+        mazeElement.appendChild(squareElement);
+      });
+
+  </script>
+</body>
+
+</html>

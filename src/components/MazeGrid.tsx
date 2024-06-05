@@ -23,7 +23,7 @@ const MazeGrid = ({
   hideTooltip?: boolean;
 }) => {
   const { cells, cheese, exit, start, dimensions } = mazeData;
-  const { horizontal, vertical } = dimensions;
+  const { horizontal, vertical } = dimensions || { horizontal: 0, vertical: 0 };
 
   const [debouncedWidth, setDebouncedWidth] = useState(mazeWidth);
   const [debouncedHeight, setDebouncedHeight] = useState(mazeHeight);

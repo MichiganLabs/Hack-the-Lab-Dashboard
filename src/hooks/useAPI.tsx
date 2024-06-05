@@ -126,7 +126,7 @@ const useAPI = () => {
           "X-API-KEY": apiKey,
         },
       });
-      participants = [...response.data];
+      participants = [...response.data, ...response.data, ...response.data];
     } catch (error: any) {
       toast({
         description: `${error}`,
@@ -250,6 +250,34 @@ const useAPI = () => {
     setParticipantMazeData([...localParticipantData]);
   };
 
+  const toogleLockMaze = async (locked: boolean) => {
+    try {
+      setLoading(true);
+      await axios({
+        url: `${baseUrl}/maze/${selectedMaze}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": apiKey,
+        },
+        data: {
+          locked: locked,
+        },
+      });
+    } catch (error: any) {
+      if (error.response.status === 403) {
+        toast({
+          title: `${error}`,
+          description: `${selectedMaze} is already ${
+            locked ? "locked" : "unlocked"
+          }`,
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     data,
     loading,
@@ -268,6 +296,7 @@ const useAPI = () => {
     me,
     fetchAllParticipantData,
     participantMazeData,
+    toogleLockMaze,
   };
 };
 

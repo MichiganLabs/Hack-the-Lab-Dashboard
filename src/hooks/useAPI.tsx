@@ -4,15 +4,9 @@ import { Action, Maze } from "@/types/maze";
 import { toast } from "@/components/ui/use-toast";
 
 const useAPI = () => {
-  const [baseUrl, setBaseUrl] = useState<string>(
-    localStorage.getItem("baseUrl") || ""
-  );
-  const [apiKey, setApiKey] = useState<string>(
-    localStorage.getItem("apiKey") || ""
-  );
-  const [selectedMaze, setSelectedMaze] = useState<string>(
-    localStorage.getItem("selectedMaze") || ""
-  );
+  const [baseUrl, setBaseUrl] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>("");
+  const [selectedMaze, setSelectedMaze] = useState<string>("");
   const [me, setMe] = useState<{
     name: string;
     role: string;
@@ -31,6 +25,9 @@ const useAPI = () => {
   >([]);
 
   useEffect(() => {
+    setSelectedMaze(localStorage.getItem("selectedMaze") || "");
+    setBaseUrl(localStorage.getItem("baseUrl") || "");
+    setApiKey(localStorage.getItem("apiKey") || "");
     if (selectedMaze !== "" && baseUrl !== "" && apiKey !== "") {
       refreshData();
     }

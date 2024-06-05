@@ -126,7 +126,7 @@ const useAPI = () => {
           "X-API-KEY": apiKey,
         },
       });
-      participants = [...response.data, ...response.data, ...response.data];
+      participants = [...response.data];
     } catch (error: any) {
       toast({
         description: `${error}`,

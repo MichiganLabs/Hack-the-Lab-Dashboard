@@ -1,8 +1,9 @@
 services:
   dashboard:
+    container_name: hackthelab-dashboard
     build:
       context: .
       target: production
     restart: unless-stopped
     ports:
-      - 3000:3000
+      - 3000:80

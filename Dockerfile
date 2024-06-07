@@ -12,17 +12,10 @@ COPY . .
 
 RUN npm run build
 
-FROM node:21.6.2-alpine AS production
+FROM nginx:alpine AS production
 
-WORKDIR /app
+COPY --from=build /app/out /usr/share/nginx/html
 
-COPY package*.json .
+EXPOSE 80
 
-RUN npm ci --omit=dev --ignore-scripts
-
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./
-
-CMD ["npm", "run", "start"]
+CMD ["nginx", "-g", "daemon off;"]

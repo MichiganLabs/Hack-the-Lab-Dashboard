@@ -1,0 +1,7 @@
+services:
+  dashboard:
+    container_name: hackthelab-dashboard
+    image: ghcr.io/michiganlabs/hack-the-lab-dashboard:latest
+    restart: unless-stopped
+    ports:
+      - 3000:80

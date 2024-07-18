@@ -10,6 +10,7 @@ export interface Action {
   actionType: ActionType;
   position: Coordinate;
   success: boolean;
+  timeTs: string;
 }
 
 export enum ActionType {
@@ -18,6 +19,8 @@ export enum ActionType {
   Eat = "EAT",
   Exit = "EXIT",
   Smell = "SMELL",
+  Grab = "GRAB",
+  Drop = "DROP",
 }
 
 export enum CellType {
@@ -34,6 +37,8 @@ export enum CategoryColor {
   EAT = "#ffef89",
   EXIT = "#ff0008",
   SMELL = "#e9d5ff",
+  GRAB = "#24a39b",
+  DROP = "#9b36ac",
 }
 
 export interface Cell {

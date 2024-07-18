@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SVGProps } from "react";
+import React, { SVGProps, useEffect, useMemo, useState } from "react";
 import MazeGrid from "../components/MazeGrid";
 import {
   Select,
@@ -15,6 +15,7 @@ import { MoveList } from "@/components/MoveList";
 import useAPI from "@/hooks/useAPI";
 import { Toaster } from "@/components/ui/toaster";
 import { AdminView } from "@/components/AdminView";
+import { Action } from "@/types/maze";
 
 const Home = () => {
   const api = useAPI();
@@ -23,6 +24,23 @@ const Home = () => {
     height: mazeHeight,
     ref: mazeRef,
   } = useResizeDetector();
+  const actions = useMemo(() => api.data || [], [api.data]);
+  const [sliderValue, setSliderValue] = useState(0);
+  const [filteredData, setFilteredData] = useState<Action[]>([]);
+
+  const handleSliderChange = (e: { target: { value: any } }) => {
+    setSliderValue(Number(e.target.value));
+  };
+
+  useEffect(() => {
+    if (!api.data) return;
+    const newFilteredData = actions.filter(
+      (action) =>
+        new Date(action.timeTs).getTime() <=
+        new Date(actions[sliderValue].timeTs).getTime()
+    );
+    setFilteredData(newFilteredData);
+  }, [sliderValue, api.data, actions]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -75,8 +93,8 @@ const Home = () => {
             </SelectTrigger>
             <SelectContent>
               {api.mazes.map((maze) => (
-                <SelectItem key={maze} value={maze}>
-                  {maze}
+                <SelectItem key={maze.id} value={maze.id}>
+                  {maze.id}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -93,46 +111,60 @@ const Home = () => {
           </button>
         </div>
       </header>
-      <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
-        {api.me.role === "ADMIN" ? (
-          <AdminView api={api} />
-        ) : (
-          <PanelGroup direction="horizontal">
-            <Panel id="maze" minSize={25} order={1}>
-              <div
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
-                ref={mazeRef}
-              >
-                <div className="flex justify-center items-center w-full">
-                  {api.mazeData &&
-                  mazeHeight &&
-                  mazeWidth &&
-                  api.mazeData.dimensions ? (
-                    <MazeGrid
-                      mazeData={api.mazeData}
-                      mazeHeight={mazeHeight}
-                      mazeWidth={mazeWidth}
-                      moveData={api.data}
+      {api.data ? (
+        <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
+          {api.me.role === "ADMIN" ? (
+            <AdminView api={api} />
+          ) : (
+            <PanelGroup direction="horizontal">
+              <Panel id="maze" minSize={25} order={1}>
+                <div
+                  className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
+                  ref={mazeRef}
+                >
+                  <div className="flex justify-center items-center w-full">
+                    {api.mazeData &&
+                    mazeHeight &&
+                    mazeWidth &&
+                    api.mazeData.dimensions ? (
+                      <MazeGrid
+                        mazeData={api.mazeData}
+                        mazeHeight={mazeHeight}
+                        mazeWidth={mazeWidth}
+                        moveData={filteredData}
+                      />
+                    ) : null}
+                  </div>
+                </div>
+              </Panel>
+              <PanelResizeHandle
+                className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
+              />
+              <Panel id="moves" minSize={25} order={2}>
+                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
+                  <div className="flex justify-center items-center w-full flex-col">
+                    <input
+                      type="range"
+                      min={0}
+                      max={actions.length - 1}
+                      value={sliderValue}
+                      onChange={handleSliderChange}
+                      step={1}
+                      className="w-full mb-4"
                     />
-                  ) : null}
+                    {api.data ? (
+                      <MoveList
+                        tableData={filteredData}
+                        resetMaze={api.resetMaze}
+                      />
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </Panel>
-            <PanelResizeHandle
-              className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
-            />
-            <Panel id="moves" minSize={25} order={2}>
-              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
-                <div className="flex justify-center items-center w-full">
-                  {api.data ? (
-                    <MoveList tableData={api.data} resetMaze={api.resetMaze} />
-                  ) : null}
-                </div>
-              </div>
-            </Panel>
-          </PanelGroup>
-        )}
-      </main>
+              </Panel>
+            </PanelGroup>
+          )}
+        </main>
+      ) : null}
       <Toaster />
     </div>
   );

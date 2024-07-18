@@ -42,36 +42,39 @@ const MazeCell = ({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: `repeat(${traversedInstances.length}, 1fr)`,
+            // This is for if we want multiple traversals to be shown in the same cell
+            //gridTemplateColumns: `repeat(${traversedInstances.length}, 1fr)`,
             width: "100%",
             height: "100%",
             position: "absolute",
             zIndex: 1,
           }}
         >
-          {traversedInstances.map((instance: any, index: number) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                height: "100%",
-                position: "relative",
-              }}
-            >
+          {[traversedInstances[traversedInstances.length - 1]].map(
+            (instance: any, index: number) => (
               <div
+                key={index}
                 style={{
-                  width: "80%",
-                  aspectRatio: "1/1",
-                  borderRadius: "50%",
-                  backgroundColor: instance.traversalColor,
-                  border: "1px solid black",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  height: "100%",
+                  position: "relative",
                 }}
-              />
-            </div>
-          ))}
+              >
+                <div
+                  style={{
+                    width: "80%",
+                    aspectRatio: "1/1",
+                    borderRadius: "50%",
+                    backgroundColor: instance.traversalColor,
+                    border: "1px solid black",
+                  }}
+                />
+              </div>
+            )
+          )}
         </div>
       ) : null}
       {hideTooltip ? null : (

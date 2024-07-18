@@ -11,7 +11,7 @@ const useAPI = () => {
     name: string;
     role: string;
   }>({ name: "", role: "" });
-  const [mazes, setMazes] = useState<string[]>([]);
+  const [mazes, setMazes] = useState<Maze[]>([]);
   const [data, setData] = useState<Action[]>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [loading, setLoading] = useState(false);

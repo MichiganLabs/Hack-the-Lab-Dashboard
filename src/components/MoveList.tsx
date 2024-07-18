@@ -57,7 +57,7 @@ export function MoveList(props: MoveListProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {props.tableData.map((item, index) => (
+            {[...props.tableData].reverse().map((item, index) => (
               <TableItem key={index} {...item} />
             ))}
           </TableBody>

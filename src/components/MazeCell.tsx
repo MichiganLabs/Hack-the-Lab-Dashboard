@@ -8,6 +8,7 @@ const MazeCell = ({
   y,
   type,
   traversedInstances,
+  cellIndex,
   hideTooltip,
 }: {
   color: string;
@@ -16,6 +17,7 @@ const MazeCell = ({
   y: number;
   type: string;
   traversedInstances: any;
+  cellIndex: number;
   hideTooltip?: boolean;
 }) => {
   return (
@@ -70,8 +72,12 @@ const MazeCell = ({
                     borderRadius: "50%",
                     backgroundColor: instance.traversalColor,
                     border: "1px solid black",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    color: "black",
                   }}
-                />
+                >{`${cellIndex}`}</div>
               </div>
             )
           )}

@@ -99,10 +99,24 @@ const MazeGrid = ({
             ?.filter(
               (move) => move.position.x === cell.x && move.position.y === cell.y
             )
-            .map((move) => ({
+            .map((move, moveIndex) => ({
               ...move,
               traversalColor: CategoryColor[move.actionType as ActionType],
+              cellIndex: moveIndex, // This is now redundant but illustrates the process
             })) ?? [];
+
+        // Find the first action in moveData that matches the cell's coordinates to determine cellIndex
+        const cellIndex = moveData
+          ? moveData.length -
+            1 -
+            [...moveData]
+              .reverse()
+              .findIndex(
+                (move) =>
+                  move.position.x === cell.x && move.position.y === cell.y
+              )
+          : -1;
+
         return cell.cellType === CellType.Wall ? (
           <div key={index} />
         ) : (
@@ -115,6 +129,7 @@ const MazeGrid = ({
             type={cell.cellType}
             traversedInstances={traversedInstances}
             hideTooltip={hideTooltip}
+            cellIndex={cellIndex >= 0 ? cellIndex : 0} // Only pass cellIndex if a matching action was found
           />
         );
       })}

@@ -37,7 +37,7 @@ interface MoveListProps {
 }
 export function MoveList(props: MoveListProps) {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full text-white">
       <main className="flex-grow p-0">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-lg font-medium">Move List</h1>
@@ -51,9 +51,9 @@ export function MoveList(props: MoveListProps) {
         <Table className="overflow-auto h-full">
           <TableHeader>
             <TableRow>
-              <TableHead>Action Type</TableHead>
-              <TableHead>Coordinate</TableHead>
-              <TableHead>Success</TableHead>
+              <TableHead className="text-white">Action Type</TableHead>
+              <TableHead className="text-white">Coordinate</TableHead>
+              <TableHead className="text-white">Success</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

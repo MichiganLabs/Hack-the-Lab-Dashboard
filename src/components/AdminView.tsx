@@ -32,7 +32,7 @@ export const AdminView = (props: { api: ReturnType<typeof useAPI> }) => {
                 key={index}
                 className="w-full flex justify-center items-center flex-col border-white rounded-md border-2 p-4"
               >
-                <div>{participant.name}</div>
+                <div className="text-white">{participant.name}</div>
                 <div className="flex justify-center mt-4">
                   <MazeGrid
                     mazeData={api.mazeData}

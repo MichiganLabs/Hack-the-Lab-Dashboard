@@ -44,7 +44,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between flex-col md:flex-row gap-4">
+      <header className="bg-gray-800 text-white py-4 px-6 flex items-center justify-between flex-col md:flex-row gap-4">
         <h1 className="text-2xl font-bold">Maze</h1>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:flex justify-between items-center gap-4 lg:gap-1">
           <div className={`text-white px-4 py-2 rounded-md text-nowrap`}>
@@ -112,14 +112,14 @@ const Home = () => {
         </div>
       </header>
       {api.data ? (
-        <main className="flex-1 bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
+        <main className="flex-1 bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
           {api.me.role === "ADMIN" ? (
             <AdminView api={api} />
           ) : (
             <PanelGroup direction="horizontal">
               <Panel id="maze" minSize={25} order={1}>
                 <div
-                  className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
+                  className="bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full"
                   ref={mazeRef}
                 >
                   <div className="flex justify-center items-center w-full">
@@ -141,7 +141,7 @@ const Home = () => {
                 className={`w-1 cursor-col-resize bg-stone-400 visible rounded-md`}
               />
               <Panel id="moves" minSize={25} order={2}>
-                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
+                <div className="bg-gray-800 shadow-lg rounded-lg p-4 w-full h-full overflow-auto">
                   <div className="flex justify-center items-center w-full flex-col">
                     <input
                       type="range"

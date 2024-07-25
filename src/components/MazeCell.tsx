@@ -33,19 +33,16 @@ const MazeCell = ({
       <div
         data-tooltip-id={`cell-${x}-${y}`}
         style={{
-          width: size,
-          height: size,
+          width: 10,
+          height: 10,
           backgroundColor: color,
-          border: "1px solid black",
         }}
-        className="rounded-md"
+        className="rounded-sm"
       />
       {traversedInstances.length > 0 ? (
         <div
           style={{
             display: "grid",
-            // This is for if we want multiple traversals to be shown in the same cell
-            //gridTemplateColumns: `repeat(${traversedInstances.length}, 1fr)`,
             width: "100%",
             height: "100%",
             position: "absolute",
@@ -67,15 +64,15 @@ const MazeCell = ({
               >
                 <div
                   style={{
-                    width: "80%",
-                    aspectRatio: "1/1",
-                    borderRadius: "50%",
+                    width: 8,
+                    height: 8,
+                    borderRadius: 0.8,
                     backgroundColor: instance.traversalColor,
-                    border: "1px solid black",
                     justifyContent: "center",
                     alignItems: "center",
                     display: "flex",
                     color: "black",
+                    fontSize: "3px",
                   }}
                 >{`${cellIndex}`}</div>
               </div>

@@ -3,6 +3,11 @@ export interface Coordinate {
   y: number;
 }
 
+export interface PlayerMaze {
+  actions: Action[];
+  score: number;
+}
+
 export interface Action {
   actionId: string;
   userId: string;

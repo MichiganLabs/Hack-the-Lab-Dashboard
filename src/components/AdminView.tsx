@@ -1,5 +1,6 @@
 import useAPI from "@/hooks/useAPI";
 import MazeGrid from "./MazeGrid";
+import { ReactFlowProvider } from "@xyflow/react";
 
 export const AdminView = (props: { api: ReturnType<typeof useAPI> }) => {
   const { api } = props;
@@ -32,15 +33,19 @@ export const AdminView = (props: { api: ReturnType<typeof useAPI> }) => {
                 key={index}
                 className="w-full flex justify-center items-center flex-col border-white rounded-md border-2 p-4"
               >
-                <div className="text-white">{participant.name}</div>
+                <div className="text-white">
+                  {participant.name} {api.data?.score}
+                </div>
                 <div className="flex justify-center mt-4">
-                  <MazeGrid
-                    mazeData={api.mazeData}
-                    moveData={participant.data}
-                    mazeWidth={600}
-                    mazeHeight={600}
-                    hideTooltip
-                  />
+                  <ReactFlowProvider>
+                    <MazeGrid
+                      mazeData={api.mazeData}
+                      moveData={participant.data.actions}
+                      mazeWidth={600}
+                      mazeHeight={600}
+                      hideTooltip
+                    />
+                  </ReactFlowProvider>
                 </div>
               </div>
             );

@@ -16,6 +16,7 @@ import useAPI from "@/hooks/useAPI";
 import { Toaster } from "@/components/ui/toaster";
 import { AdminView } from "@/components/AdminView";
 import { Action } from "@/types/maze";
+import { ReactFlowProvider } from "@xyflow/react";
 
 const Home = () => {
   const api = useAPI();
@@ -24,7 +25,7 @@ const Home = () => {
     height: mazeHeight,
     ref: mazeRef,
   } = useResizeDetector();
-  const actions = useMemo(() => api.data || [], [api.data]);
+  const actions = useMemo(() => api.data?.actions || [], [api.data?.actions]);
   const [sliderValue, setSliderValue] = useState(0);
   const [filteredData, setFilteredData] = useState<Action[]>([]);
 
@@ -33,7 +34,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (!api.data) return;
+    if (!api.data || !actions) return;
     const newFilteredData = actions.filter(
       (action) =>
         new Date(action.timeTs).getTime() <=
@@ -127,12 +128,15 @@ const Home = () => {
                     mazeHeight &&
                     mazeWidth &&
                     api.mazeData.dimensions ? (
-                      <MazeGrid
-                        mazeData={api.mazeData}
-                        mazeHeight={mazeHeight}
-                        mazeWidth={mazeWidth}
-                        moveData={filteredData}
-                      />
+                      <ReactFlowProvider>
+                        <MazeGrid
+                          mazeData={api.mazeData}
+                          mazeHeight={mazeHeight}
+                          mazeWidth={mazeWidth}
+                          moveData={filteredData}
+                          hideTooltip
+                        />
+                      </ReactFlowProvider>
                     ) : null}
                   </div>
                 </div>
@@ -156,6 +160,7 @@ const Home = () => {
                       <MoveList
                         tableData={filteredData}
                         resetMaze={api.resetMaze}
+                        score={api.data.score}
                       />
                     ) : null}
                   </div>

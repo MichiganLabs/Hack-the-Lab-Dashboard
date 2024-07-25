@@ -33,6 +33,7 @@ function TableItem(props: Action) {
 
 interface MoveListProps {
   tableData: Action[];
+  score: number;
   resetMaze: () => void;
 }
 export function MoveList(props: MoveListProps) {
@@ -41,6 +42,7 @@ export function MoveList(props: MoveListProps) {
       <main className="flex-grow p-0">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-lg font-medium">Move List</h1>
+          <h1 className="text-lg font-medium">Score: {props.score}</h1>
           <button
             onClick={props.resetMaze}
             className="px-4 py-2 bg-red-500 text-white rounded-md"

@@ -1,5 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { useDebouncedCallback } from "use-debounce";
+import React, { useEffect, useMemo } from "react";
 import MazeCell from "./MazeCell";
 import {
   Action,
@@ -8,8 +7,10 @@ import {
   CellType,
   Maze,
 } from "@/types/maze.d";
+import { Background, Controls, ReactFlow, useReactFlow } from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
-const MazeGrid = ({
+const MazeFlow = ({
   mazeData,
   moveData,
   mazeWidth,
@@ -22,119 +23,117 @@ const MazeGrid = ({
   mazeHeight: number;
   hideTooltip?: boolean;
 }) => {
-  const { cells, cheese, exit, start, dimensions } = mazeData;
+  const reactFlowInstance = useReactFlow();
+  const fitView = () => {
+    // wait 1 second
+    setTimeout(() => {
+      reactFlowInstance.fitView({ padding: 1 });
+    }, 100);
+  };
+  const { cells, dimensions } = mazeData;
   const { horizontal, vertical } = dimensions || { horizontal: 0, vertical: 0 };
 
-  const [debouncedWidth, setDebouncedWidth] = useState(mazeWidth);
-  const [debouncedHeight, setDebouncedHeight] = useState(mazeHeight);
-
-  const debouncedResize = useDebouncedCallback((width, height) => {
-    setDebouncedWidth(width);
-    setDebouncedHeight(height);
-  }, 10);
-
-  useEffect(() => {
-    debouncedResize(mazeWidth - 50, mazeHeight);
-  }, [mazeWidth, mazeHeight, debouncedResize]);
-
   const cellSize = Math.min(
-    debouncedWidth ? debouncedWidth / (horizontal || 0) : 0,
-    debouncedHeight ? debouncedHeight / (vertical || 0) : 0
+    mazeWidth ? mazeWidth / (horizontal || 0) : 0,
+    mazeHeight ? mazeHeight / (vertical || 0) : 0
   );
 
-  const grid = useMemo(() => {
-    const gridArray = [];
-    for (let y = 0; y < vertical; y++) {
-      for (let x = 0; x < horizontal; x++) {
-        const cell = cells.find(
-          (c: { coordinates: { x: number; y: number } }) =>
-            c.coordinates.x === x && c.coordinates.y === y
-        );
-        const cellType = cell ? cell.type : CellType.Wall;
-        let color;
-        switch (cellType) {
-          case "Wall":
-            color = "#020712";
-            break;
-          case "Open":
-            color = "#415572";
-            break;
-          case "Cheese":
-            color = "#c7da53";
-            break;
-          case "Exit":
-            color = "#00ff79";
-            break;
-          case "Start":
-            color = "#8bbcf8";
-            break;
-          default:
-            color = "white";
-            break;
-        }
+  const nodes = useMemo(() => {
+    if (!cells) return [];
+    return cells.map((cell, index) => {
+      const { x, y } = cell.coordinates;
+      const color =
+        cell.type === CellType.Wall
+          ? "#020712"
+          : cell.type === CellType.Open
+          ? "#415572"
+          : cell.type === CellType.Cheese
+          ? "#c7da53"
+          : cell.type === CellType.Exit
+          ? "#00ff79"
+          : cell.type === CellType.Entrance
+          ? "#8bbcf8"
+          : "white";
 
-        gridArray.push({ color, x, y, cellType });
-      }
-    }
-    return gridArray;
-  }, [cells, vertical, horizontal]);
+      const traversedInstances =
+        moveData
+          ?.filter((move) => move.position.x === x && move.position.y === y)
+          .map((move, moveIndex) => ({
+            ...move,
+            traversalColor: CategoryColor[move.actionType as ActionType],
+            cellIndex: moveIndex,
+          })) ?? [];
 
-  if (!mazeData || !mazeData.cells || !mazeData.dimensions) {
-    return null;
-  }
+      const cellIndex = moveData
+        ? moveData.length -
+          1 -
+          [...moveData]
+            .reverse()
+            .findIndex((move) => move.position.x === x && move.position.y === y)
+        : -1;
+
+      return {
+        id: `cell-${x}-${y}`,
+        position: { x: x * 10, y: y * 10 },
+        data: {
+          color,
+          size: cellSize,
+          x,
+          y,
+          type: cell.type,
+          traversedInstances,
+          cellIndex: cellIndex >= 0 ? cellIndex : 0,
+          hideTooltip,
+        },
+        style: {
+          width: cellSize,
+          height: cellSize,
+        },
+        type: "mazeCell",
+      };
+    });
+  }, [cells, moveData, cellSize, hideTooltip]);
+
+  const nodeTypes = useMemo(
+    () => ({
+      mazeCell: MazeCellNode,
+    }),
+    []
+  );
+
+  const filteredNodes = nodes.filter(
+    (node) => node.data.type !== CellType.Wall
+  );
+
+  useEffect(() => {
+    fitView();
+  }, [mazeData.id]);
+
   return (
-    <div
-      style={{
-        display: "grid",
-        height: "100%",
-        width: "100%",
-        gridTemplateColumns: `repeat(${horizontal}, ${cellSize}px)`,
-        //gridTemplateRows: `repeat(${vertical}, ${cellSize}px)`,
-        gap: "1px",
-      }}
-    >
-      {grid.map((cell, index) => {
-        const traversedInstances =
-          moveData
-            ?.filter(
-              (move) => move.position.x === cell.x && move.position.y === cell.y
-            )
-            .map((move, moveIndex) => ({
-              ...move,
-              traversalColor: CategoryColor[move.actionType as ActionType],
-              cellIndex: moveIndex, // This is now redundant but illustrates the process
-            })) ?? [];
-
-        // Find the first action in moveData that matches the cell's coordinates to determine cellIndex
-        const cellIndex = moveData
-          ? moveData.length -
-            1 -
-            [...moveData]
-              .reverse()
-              .findIndex(
-                (move) =>
-                  move.position.x === cell.x && move.position.y === cell.y
-              )
-          : -1;
-
-        return cell.cellType === CellType.Wall ? (
-          <div key={index} />
-        ) : (
-          <MazeCell
-            key={index}
-            color={cell.color}
-            size={cellSize}
-            x={cell.x}
-            y={cell.y}
-            type={cell.cellType}
-            traversedInstances={traversedInstances}
-            hideTooltip={hideTooltip}
-            cellIndex={cellIndex >= 0 ? cellIndex : 0} // Only pass cellIndex if a matching action was found
-          />
-        );
-      })}
+    <div style={{ height: mazeHeight, width: mazeWidth }}>
+      <ReactFlow
+        nodesDraggable={false}
+        colorMode="dark"
+        nodes={filteredNodes}
+        nodeTypes={nodeTypes}
+        proOptions={{ hideAttribution: true }}
+        maxZoom={10}
+        minZoom={0.5}
+        fitView
+        draggable={false}
+      >
+        <Controls />
+      </ReactFlow>
     </div>
   );
 };
 
-export default MazeGrid;
+const MazeCellNode = ({ data }: { data: any }) => {
+  return (
+    <div style={{ width: data.size, height: data.size }}>
+      <MazeCell {...data} />
+    </div>
+  );
+};
+
+export default MazeFlow;

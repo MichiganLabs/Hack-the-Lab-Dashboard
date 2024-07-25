@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Action, Maze } from "@/types/maze";
+import { Action, Maze, PlayerMaze } from "@/types/maze";
 import { toast } from "@/components/ui/use-toast";
 
 const useAPI = () => {
@@ -12,7 +12,7 @@ const useAPI = () => {
     role: string;
   }>({ name: "", role: "" });
   const [mazes, setMazes] = useState<Maze[]>([]);
-  const [data, setData] = useState<Action[]>();
+  const [data, setData] = useState<PlayerMaze>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [loading, setLoading] = useState(false);
   const [participantMazeData, setParticipantMazeData] = useState<
@@ -20,7 +20,7 @@ const useAPI = () => {
       id: number;
       name: string;
       role: string;
-      data: Action[];
+      data: PlayerMaze;
     }[]
   >([]);
 
@@ -189,13 +189,17 @@ const useAPI = () => {
           "X-API-KEY": apiKey,
         },
       });
-      setData([
-        ...response.data.actions.sort(
-          (a: Action, b: Action) => parseInt(a.actionId) - parseInt(b.actionId)
-        ),
-      ]);
+      setData({
+        actions: [
+          ...response.data.actions.sort(
+            (a: Action, b: Action) =>
+              parseInt(a.actionId) - parseInt(b.actionId)
+          ),
+        ],
+        score: response.data.score,
+      });
     } catch (error: any) {
-      setData([]);
+      setData({ actions: [], score: 0 });
       toast({
         description: `${error}`,
       });
@@ -204,8 +208,8 @@ const useAPI = () => {
     }
   };
 
-  const fetchPlayerData = async (playerId: string): Promise<Action[]> => {
-    let playerData: Action[] = [];
+  const fetchPlayerData = async (playerId: string): Promise<PlayerMaze> => {
+    let playerData: PlayerMaze = { actions: [], score: 0 };
     try {
       setLoading(true);
       const response = await axios({
@@ -216,11 +220,15 @@ const useAPI = () => {
           "X-API-KEY": apiKey,
         },
       });
-      playerData = [
-        ...response.data.actions.sort(
-          (a: Action, b: Action) => parseInt(a.actionId) - parseInt(b.actionId)
-        ),
-      ];
+      playerData = {
+        actions: [
+          ...response.data.actions.sort(
+            (a: Action, b: Action) =>
+              parseInt(a.actionId) - parseInt(b.actionId)
+          ),
+        ],
+        score: response.data.score,
+      };
     } catch (error: any) {
       toast({
         description: `${error}`,
@@ -237,11 +245,11 @@ const useAPI = () => {
       id: number;
       name: string;
       role: string;
-      data: Action[];
+      data: PlayerMaze;
     }[] = await Promise.all(
       participants.map(async (participant) => {
         const data = await fetchPlayerData(`${participant.id}`);
-        return { data: [...data], ...participant };
+        return { data, ...participant };
       })
     );
     setParticipantMazeData([...localParticipantData]);

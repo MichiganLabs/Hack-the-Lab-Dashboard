@@ -16,6 +16,7 @@ export interface Action {
   position: Coordinate;
   success: boolean;
   timeTs: string;
+  actionData: any;
 }
 
 export enum ActionType {

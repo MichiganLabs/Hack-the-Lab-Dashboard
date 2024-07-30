@@ -6,9 +6,23 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
-import { Action, CategoryColor } from "@/types/maze.d";
+import { Action, ActionType, CategoryColor } from "@/types/maze.d";
 
 function TableItem(props: Action) {
+  const actionData = () => {
+    try {
+      switch (props.actionType) {
+        case ActionType.Move:
+          return props.actionData.direction;
+        case ActionType.Smell:
+          return props.actionData.distance;
+        default:
+          return JSON.stringify(props.actionData);
+      }
+    } catch (e) {
+      return "";
+    }
+  };
   return (
     <TableRow
       style={{
@@ -21,6 +35,14 @@ function TableItem(props: Action) {
           className={`px-2 py-1 rounded-md text-black`}
         >
           {props.actionType}
+        </span>
+      </TableCell>
+      <TableCell className="rounded-l-md">
+        <span
+          style={{ backgroundColor: CategoryColor[props.actionType] }}
+          className={`px-2 py-1 rounded-md text-black`}
+        >
+          {actionData()}
         </span>
       </TableCell>
       <TableCell>
@@ -54,6 +76,7 @@ export function MoveList(props: MoveListProps) {
           <TableHeader>
             <TableRow>
               <TableHead className="text-white">Action Type</TableHead>
+              <TableHead className="text-white">Direction</TableHead>
               <TableHead className="text-white">Coordinate</TableHead>
               <TableHead className="text-white">Success</TableHead>
             </TableRow>

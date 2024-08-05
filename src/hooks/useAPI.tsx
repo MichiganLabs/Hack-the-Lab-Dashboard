@@ -136,6 +136,7 @@ const useAPI = () => {
 
   const fetchMazeData = async () => {
     try {
+      console.log("fetching maze data");
       setLoading(true);
       const response = await axios({
         url: `${baseUrl}/maze/${selectedMaze}`,

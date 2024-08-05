@@ -8,7 +8,10 @@ import {
 } from "@/components/ui/table";
 import { Action, ActionType, CategoryColor } from "@/types/maze.d";
 
-function TableItem(props: Action) {
+interface IndexedAction extends Action {
+  index: number;
+}
+function TableItem(props: IndexedAction) {
   const actionData = () => {
     try {
       switch (props.actionType) {
@@ -29,6 +32,11 @@ function TableItem(props: Action) {
         backgroundColor: props.success ? "#1f2937" : "#7f1c1d",
       }}
     >
+      <TableCell className="rounded-l-md">
+        <span style={{}} className={`px-2 py-1 rounded-md text-white`}>
+          {props.index}
+        </span>
+      </TableCell>
       <TableCell className="rounded-l-md">
         <span
           style={{ backgroundColor: CategoryColor[props.actionType] }}
@@ -75,16 +83,23 @@ export function MoveList(props: MoveListProps) {
         <Table className="overflow-auto h-full">
           <TableHeader>
             <TableRow>
+              <TableHead className="text-white">Move #</TableHead>
               <TableHead className="text-white">Action Type</TableHead>
-              <TableHead className="text-white">Direction</TableHead>
+              <TableHead className="text-white">Details</TableHead>
               <TableHead className="text-white">Coordinate</TableHead>
               <TableHead className="text-white">Success</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {[...props.tableData].reverse().map((item, index) => (
-              <TableItem key={index} {...item} />
-            ))}
+            {props.tableData
+              .map((item, originalIndex) => ({ ...item, originalIndex }))
+              .reverse()
+              .map((item, index) => (
+                <TableItem
+                  key={index}
+                  {...{ ...item, index: item.originalIndex }}
+                />
+              ))}
           </TableBody>
         </Table>
       </main>

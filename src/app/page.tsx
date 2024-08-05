@@ -34,13 +34,19 @@ const Home = () => {
   };
 
   useEffect(() => {
+    handleSliderChange({ target: { value: actions.length - 1 } });
+  }, [actions.length, api.data]);
+
+  useEffect(() => {
     if (!api.data || !actions) return;
-    const newFilteredData = actions.filter(
-      (action) =>
-        new Date(action.timeTs).getTime() <=
-        new Date(actions[sliderValue].timeTs).getTime()
-    );
-    setFilteredData(newFilteredData);
+    if (actions[sliderValue] && actions[sliderValue].timeTs) {
+      const newFilteredData = actions.filter(
+        (action) =>
+          new Date(action.timeTs).getTime() <=
+          new Date(actions[sliderValue].timeTs).getTime()
+      );
+      setFilteredData(newFilteredData);
+    }
   }, [sliderValue, api.data, actions]);
 
   return (

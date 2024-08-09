@@ -1,28 +1,31 @@
 import useAPI from "@/hooks/useAPI";
 import MazeGrid from "./MazeGrid";
 import { ReactFlowProvider } from "@xyflow/react";
+import { use, useEffect, useState } from "react";
 
 export const AdminView = (props: { api: ReturnType<typeof useAPI> }) => {
   const { api } = props;
+  const [isMazeLocked, setIsMazeLocked] = useState(
+    api.mazeData?.locked || false
+  );
+
+  useEffect(() => {
+    setIsMazeLocked(api.mazeData?.locked || false);
+  }, [api.mazeData]);
 
   return (
     <div className="h-full overflow-auto w-full">
       <div className="flex flex-row gap-4 mb-4">
         <button
-          className={`text-white px-4 py-2 rounded-md w-44 bg-yellow-500`}
+          className={`text-white px-4 py-2 rounded-md w-44 ${
+            isMazeLocked ? "bg-yellow-500" : "bg-green-500"
+          }`}
           onClick={() => {
-            api.toogleLockMaze(true);
+            api.toggleLockMaze(!isMazeLocked);
+            setIsMazeLocked(!isMazeLocked);
           }}
         >
-          Lock Maze
-        </button>
-        <button
-          className={`text-white px-4 py-2 rounded-md w-44 bg-green-500`}
-          onClick={() => {
-            api.toogleLockMaze(false);
-          }}
-        >
-          Unlock Maze
+          {isMazeLocked ? "Unlock Maze" : "Lock Maze"}
         </button>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 w-full pb-24">

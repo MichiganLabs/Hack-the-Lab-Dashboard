@@ -256,7 +256,7 @@ const useAPI = () => {
     setParticipantMazeData([...localParticipantData]);
   };
 
-  const toogleLockMaze = async (locked: boolean) => {
+  const toggleLockMaze = async (locked: boolean) => {
     try {
       setLoading(true);
       await axios({
@@ -302,7 +302,7 @@ const useAPI = () => {
     me,
     fetchAllParticipantData,
     participantMazeData,
-    toogleLockMaze,
+    toggleLockMaze,
   };
 };
 

@@ -67,4 +67,5 @@ export interface Maze {
     vertical: number;
   };
   open_square_count: number;
+  locked: boolean;
 }

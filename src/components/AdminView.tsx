@@ -33,8 +33,12 @@ export const AdminView = (props: { api: ReturnType<typeof useAPI> }) => {
                 key={index}
                 className="w-full flex justify-center items-center flex-col border-white rounded-md border-2 p-4"
               >
-                <div className="text-white">
-                  {participant.name} {api.data?.score}
+                <div className="text-white font-bold flex flex-row gap-2">
+                  <div className="text-gray-300 font-light">
+                    {participant.name}
+                  </div>
+                  <div className="text-gray-300 font-light">-</div>
+                  {participant.data.score.toLocaleString()}
                 </div>
                 <div className="flex justify-center mt-4">
                   <ReactFlowProvider>

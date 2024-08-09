@@ -75,7 +75,7 @@ const Home = () => {
               className="bg-gray-800 w-44 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter API Token"
               value={api.apiKey}
-              type="text"
+              type="password"
               onChange={(e) => api.updateApiKey(e.target.value)}
             />
             {api.apiKey ? null : (

@@ -15,6 +15,12 @@ function TableItem(props: IndexedAction) {
   const actionData = () => {
     try {
       switch (props.actionType) {
+        case ActionType.Grab:
+        case ActionType.Drop:
+          return `${props.actionData.x}:${props.actionData.y}`;
+        case ActionType.Exit:
+        case ActionType.Start:
+          return "N/A";
         case ActionType.Move:
           return props.actionData.direction;
         case ActionType.Smell:

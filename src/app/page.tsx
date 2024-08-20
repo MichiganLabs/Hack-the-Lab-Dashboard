@@ -25,7 +25,7 @@ const Home = () => {
     height: mazeHeight,
     ref: mazeRef,
   } = useResizeDetector();
-  const actions = useMemo(() => api.data?.actions || [], [api.data?.actions]);
+  const actions = useMemo(() => api.data?.actions || [], [api.data]);
   const [sliderValue, setSliderValue] = useState(0);
   const [filteredData, setFilteredData] = useState<Action[]>([]);
 
@@ -42,7 +42,10 @@ const Home = () => {
   }, [actions.length, api.data]);
 
   useEffect(() => {
-    if (!api.data || !actions) return;
+    setFilteredData([]);
+    if (!api.data || !actions) {
+      return;
+    }
     if (actions[sliderValue] && actions[sliderValue].timeTs) {
       const newFilteredData = actions.filter(
         (action) =>

@@ -182,6 +182,7 @@ const useAPI = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setData({ actions: [], score: 0 });
       const response = await axios({
         url: `${baseUrl}/rat/${selectedMaze}/actions`,
         method: "GET",
@@ -200,7 +201,6 @@ const useAPI = () => {
         score: response.data.score,
       });
     } catch (error: any) {
-      setData({ actions: [], score: 0 });
       toast({
         description: `${error}`,
       });

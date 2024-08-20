@@ -14,7 +14,6 @@ const useAPI = () => {
   const [mazes, setMazes] = useState<Maze[]>([]);
   const [data, setData] = useState<PlayerMaze>();
   const [mazeData, setMazeData] = useState<Maze>();
-  const [loading, setLoading] = useState(false);
   const [participantMazeData, setParticipantMazeData] = useState<
     {
       id: number;
@@ -23,6 +22,27 @@ const useAPI = () => {
       data: PlayerMaze;
     }[]
   >([]);
+
+  const [fetchingData, setFetchingData] = useState<boolean>(false);
+  const [fetchingMazeData, setFetchingMazeData] = useState<boolean>(false);
+  const [fetchingMazing, setFetchingMazing] = useState<boolean>(false);
+  const [fetchingMe, setFetchingMe] = useState<boolean>(false);
+  const [fetchingPlayerData, setFetchingPlayerData] = useState<boolean>(false);
+  const [fetchingParticipants, setFetchingParticipants] = useState<boolean>(
+    false
+  );
+  const [lockingMaze, setLockingMaze] = useState<boolean>(false);
+  const [resetting, setResetting] = useState<boolean>(false);
+
+  const loading = fetchingData ||
+    fetchingMazeData ||
+    fetchingMazing ||
+    fetchingMe ||
+    fetchingPlayerData ||
+    fetchingParticipants ||
+    lockingMaze ||
+    resetting;
+
 
   useEffect(() => {
     setSelectedMaze(localStorage.getItem("selectedMaze") || "");
@@ -66,7 +86,7 @@ const useAPI = () => {
 
   const fetchMe = async () => {
     try {
-      setLoading(true);
+      setFetchingMe(true);
       const response = await axios({
         url: `${baseUrl}/me`,
         method: "GET",
@@ -81,13 +101,13 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setFetchingMe(false);
     }
   };
 
   const resetMaze = async () => {
     try {
-      setLoading(true);
+      setResetting(true);
       const response = await axios({
         url: `${baseUrl}/rat/reset`,
         method: "POST",
@@ -105,7 +125,7 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setResetting(false);
     }
   };
 
@@ -114,7 +134,7 @@ const useAPI = () => {
   > => {
     let participants: { id: number; name: string; role: string }[] = [];
     try {
-      setLoading(true);
+      setFetchingParticipants(true);
       const response = await axios({
         url: `${baseUrl}/participants`,
         method: "GET",
@@ -129,7 +149,7 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setFetchingParticipants(false);
     }
     return participants;
   };
@@ -137,7 +157,7 @@ const useAPI = () => {
   const fetchMazeData = async () => {
     try {
       console.log("fetching maze data");
-      setLoading(true);
+      setFetchingMazeData(true);
       const response = await axios({
         url: `${baseUrl}/maze/${selectedMaze}`,
         method: "GET",
@@ -153,13 +173,13 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setFetchingMazeData(false);
     }
   };
 
   const fetchMazes = async () => {
     try {
-      setLoading(true);
+      setFetchingMazing(true);
       const response = await axios({
         url: `${baseUrl}/mazes`,
         method: "GET",
@@ -175,13 +195,13 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setFetchingMazing(false);
     }
   };
 
   const fetchData = async () => {
     try {
-      setLoading(true);
+      setFetchingData(true);
       setData({ actions: [], score: 0 });
       const response = await axios({
         url: `${baseUrl}/rat/${selectedMaze}/actions`,
@@ -205,14 +225,14 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setFetchingData(false);
     }
   };
 
   const fetchPlayerData = async (playerId: string): Promise<PlayerMaze> => {
     let playerData: PlayerMaze = { actions: [], score: 0 };
     try {
-      setLoading(true);
+      setFetchingPlayerData(true);
       const response = await axios({
         url: `${baseUrl}/maze/${selectedMaze}/actions/${playerId}`,
         method: "GET",
@@ -235,7 +255,7 @@ const useAPI = () => {
         description: `${error}`,
       });
     } finally {
-      setLoading(false);
+      setFetchingPlayerData(false);
     }
     return playerData;
   };
@@ -258,7 +278,7 @@ const useAPI = () => {
 
   const toggleLockMaze = async (locked: boolean) => {
     try {
-      setLoading(true);
+      setLockingMaze(true);
       await axios({
         url: `${baseUrl}/maze/${selectedMaze}`,
         method: "PUT",
@@ -274,13 +294,12 @@ const useAPI = () => {
       if (error.response.status === 403) {
         toast({
           title: `${error}`,
-          description: `${selectedMaze} is already ${
-            locked ? "locked" : "unlocked"
-          }`,
+          description: `${selectedMaze} is already ${locked ? "locked" : "unlocked"
+            }`,
         });
       }
     } finally {
-      setLoading(false);
+      setLockingMaze(false);
     }
   };
 

@@ -4,11 +4,13 @@ import {
   Action,
   ActionType,
   CategoryColor,
+  CellColor,
   CellType,
   Maze,
 } from "@/types/maze.d";
 import { Background, Controls, ReactFlow, useReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import Legend from "./Legend";
 
 const MazeFlow = ({
   mazeData,
@@ -42,18 +44,7 @@ const MazeFlow = ({
     if (!cells) return [];
     return cells.map((cell, index) => {
       const { x, y } = cell.coordinates;
-      const color =
-        cell.type === CellType.Wall
-          ? "#020712"
-          : cell.type === CellType.Open
-            ? "#415572"
-            : cell.type === CellType.Cheese
-              ? "#c7da53"
-              : cell.type === CellType.Exit
-                ? "#00ff79"
-                : cell.type === CellType.Entrance
-                  ? "#8bbcf8"
-                  : "white";
+      const color = CellColor[cell.type as CellType];
 
       const traversedInstances =
         moveData
@@ -126,6 +117,7 @@ const MazeFlow = ({
         draggable={false}
       >
         <Controls />
+        <Legend />
       </ReactFlow>
     </div>
   );

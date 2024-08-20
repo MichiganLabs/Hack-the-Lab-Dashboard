@@ -47,6 +47,14 @@ export enum CategoryColor {
   DROP = "#9b36ac",
 }
 
+export enum CellColor {
+  Wall = "#020712",
+  Open = "#415572",
+  Cheese = "#c7da53",
+  Exit = "#00ff79",
+  Start = "#8bbcf8",
+}
+
 export interface Cell {
   type: CellType;
   surroundings: Surroundings;

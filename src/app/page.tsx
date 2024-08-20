@@ -83,13 +83,14 @@ const Home = () => {
             )}
           </div>
           <div className="relative">
-            <input
-              className="bg-gray-800 w-44 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Base URL"
-              value={api.baseUrl}
-              type="text"
-              onChange={(e) => api.updateBaseUrl(e.target.value)}
-            />
+            {process.env.NODE_ENV === "development" ?
+              <input
+                className="bg-gray-800 w-44 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Base URL"
+                value={api.baseUrl}
+                type="text"
+                onChange={(e) => api.updateBaseUrl(e.target.value)}
+              /> : <></>}
           </div>
           <Select
             onValueChange={api.updateSelectedMaze}

@@ -30,7 +30,7 @@ const Home = () => {
   const [filteredData, setFilteredData] = useState<Action[]>([]);
 
   const [isUpdating, setIsUpdating] = useState(false);
-  const isUpdateDisabled =  isUpdating || !api.selectedMaze || !api.apiKey || !api.baseUrl;
+  const isUpdateDisabled =  isUpdating || !api.apiKey || !api.baseUrl;
   const updateButtonClassName = `text-white px-4 py-2 rounded-md w-24 ${isUpdateDisabled ? "cursor-not-allowed bg-gray-500" : "cursor-pointer bg-blue-500"}`;
 
   const handleSliderChange = (e: { target: { value: any } }) => {

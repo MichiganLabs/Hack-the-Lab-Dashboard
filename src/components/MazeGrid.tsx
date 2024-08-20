@@ -46,14 +46,14 @@ const MazeFlow = ({
         cell.type === CellType.Wall
           ? "#020712"
           : cell.type === CellType.Open
-          ? "#415572"
-          : cell.type === CellType.Cheese
-          ? "#c7da53"
-          : cell.type === CellType.Exit
-          ? "#00ff79"
-          : cell.type === CellType.Entrance
-          ? "#8bbcf8"
-          : "white";
+            ? "#415572"
+            : cell.type === CellType.Cheese
+              ? "#c7da53"
+              : cell.type === CellType.Exit
+                ? "#00ff79"
+                : cell.type === CellType.Entrance
+                  ? "#8bbcf8"
+                  : "white";
 
       const traversedInstances =
         moveData
@@ -72,6 +72,8 @@ const MazeFlow = ({
             .findIndex((move) => move.position.x === x && move.position.y === y)
         : -1;
 
+      const isLastCell = cellIndex == (moveData?.length ?? 0) - 1;
+
       return {
         id: `cell-${x}-${y}`,
         position: { x: x * 10, y: y * 10 },
@@ -83,6 +85,7 @@ const MazeFlow = ({
           type: cell.type,
           traversedInstances,
           cellIndex: cellIndex >= 0 ? cellIndex : 0,
+          className: isLastCell ? "animate-pulse" : "",
           hideTooltip,
         },
         style: {

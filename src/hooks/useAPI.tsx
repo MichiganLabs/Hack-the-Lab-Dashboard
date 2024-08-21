@@ -4,7 +4,7 @@ import { Action, Maze, PlayerMaze } from "@/types/maze";
 import { toast } from "@/components/ui/use-toast";
 
 const useAPI = () => {
-  const [baseUrl, setBaseUrl] = useState<string>("");
+  const [baseUrl, setBaseUrl] = useState<string>("http://api.milabs.xyz/v1");
   const [apiKey, setApiKey] = useState<string>("");
   const [selectedMaze, setSelectedMaze] = useState<string>("");
   const [me, setMe] = useState<{
@@ -26,7 +26,7 @@ const useAPI = () => {
 
   useEffect(() => {
     setSelectedMaze(localStorage.getItem("selectedMaze") || "");
-    setBaseUrl(localStorage.getItem("baseUrl") || "");
+    if (process.env.NODE_ENV === "development") setBaseUrl(localStorage.getItem("baseUrl") ?? baseUrl);
     setApiKey(localStorage.getItem("apiKey") || "");
     if (selectedMaze !== "" && baseUrl !== "" && apiKey !== "") {
       refreshData();

@@ -18,12 +18,14 @@ const MazeFlow = ({
   mazeWidth,
   mazeHeight,
   hideTooltip,
+  hideLegend,
 }: {
   mazeData: Maze;
   moveData?: Action[];
   mazeWidth: number;
   mazeHeight: number;
   hideTooltip?: boolean;
+  hideLegend?: boolean;
 }) => {
   const reactFlowInstance = useReactFlow();
   const fitView = () => {
@@ -57,10 +59,10 @@ const MazeFlow = ({
 
       const cellIndex = moveData
         ? moveData.length -
-          1 -
-          [...moveData]
-            .reverse()
-            .findIndex((move) => move.position.x === x && move.position.y === y)
+        1 -
+        [...moveData]
+          .reverse()
+          .findIndex((move) => move.position.x === x && move.position.y === y)
         : -1;
 
       const isLastCell = cellIndex == (moveData?.length ?? 0) - 1;
@@ -117,7 +119,7 @@ const MazeFlow = ({
         draggable={false}
       >
         <Controls />
-        <Legend />
+        {hideLegend ? null : <Legend />}
       </ReactFlow>
     </div>
   );

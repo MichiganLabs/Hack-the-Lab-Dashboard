@@ -51,6 +51,7 @@ export const AdminView = (props: { api: ReturnType<typeof useAPI> }) => {
                       mazeWidth={600}
                       mazeHeight={600}
                       hideTooltip
+                      hideLegend
                     />
                   </ReactFlowProvider>
                 </div>

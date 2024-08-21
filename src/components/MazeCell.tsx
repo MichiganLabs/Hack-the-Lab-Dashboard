@@ -8,7 +8,8 @@ const MazeCell = ({
   y,
   type,
   traversedInstances,
-  cellIndex,
+  cellIndex, 
+  className,
   hideTooltip,
 }: {
   color: string;
@@ -18,6 +19,7 @@ const MazeCell = ({
   type: string;
   traversedInstances: any;
   cellIndex: number;
+  className: string | undefined;
   hideTooltip?: boolean;
 }) => {
   return (
@@ -29,6 +31,7 @@ const MazeCell = ({
         justifyContent: "center",
         alignItems: "center",
       }}
+      className={className}
     >
       <div
         data-tooltip-id={`cell-${x}-${y}`}

@@ -6,6 +6,7 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
+import useAPI from "@/hooks/useAPI";
 import { Action, ActionType, CategoryColor } from "@/types/maze.d";
 
 interface IndexedAction extends Action {
@@ -15,6 +16,12 @@ function TableItem(props: IndexedAction) {
   const actionData = () => {
     try {
       switch (props.actionType) {
+        case ActionType.Grab:
+        case ActionType.Drop:
+          return `${props.actionData.x}:${props.actionData.y}`;
+        case ActionType.Exit:
+        case ActionType.Start:
+          return "N/A";
         case ActionType.Move:
           return props.actionData.direction;
         case ActionType.Smell:
@@ -62,11 +69,16 @@ function TableItem(props: IndexedAction) {
 }
 
 interface MoveListProps {
+  api: ReturnType<typeof useAPI>;
   tableData: Action[];
   score: number;
   resetMaze: () => void;
 }
 export function MoveList(props: MoveListProps) {
+  const {api} = props;
+  const isResetDisabled = api.loading || api.data === null;
+  const resetButtonClassName = `px-4 py-2 text-white rounded-md ${isResetDisabled ? "cursor-not-allowed bg-gray-500" : "cursor-pointer bg-red-500"}`;
+
   return (
     <div className="flex w-full text-white">
       <main className="flex-grow p-0">
@@ -74,8 +86,9 @@ export function MoveList(props: MoveListProps) {
           <h1 className="text-lg font-medium">Move List</h1>
           <h1 className="text-lg font-medium">Score: {props.score}</h1>
           <button
+            disabled={isResetDisabled}
             onClick={props.resetMaze}
-            className="px-4 py-2 bg-red-500 text-white rounded-md"
+            className={resetButtonClassName}
           >
             Reset Rat
           </button>

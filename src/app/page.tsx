@@ -90,7 +90,7 @@ const Home = () => {
                 value={api.baseUrl}
                 type="text"
                 onChange={(e) => api.updateBaseUrl(e.target.value)}
-              /> : <></>}
+              /> : null}
           </div>
           <Select
             onValueChange={api.updateSelectedMaze}

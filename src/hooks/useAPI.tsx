@@ -12,7 +12,7 @@ const useAPI = () => {
     role: string;
   }>({ name: "", role: "" });
   const [mazes, setMazes] = useState<Maze[]>([]);
-  const [data, setData] = useState<PlayerMaze>();
+  const [actionData, setActionData] = useState<PlayerMaze>();
   const [mazeData, setMazeData] = useState<Maze>();
   const [participantMazeData, setParticipantMazeData] = useState<
     {
@@ -61,7 +61,7 @@ const useAPI = () => {
 
   const refreshData = async () => {
     await fetchMazeData();
-    await fetchData();
+    await fetchActionData();
     await fetchMazes();
     await fetchMe();
     if (me.role === "ADMIN") {
@@ -199,10 +199,9 @@ const useAPI = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchActionData = async (): Promise<boolean> => {
     try {
       setFetchingData(true);
-      setData({ actions: [], score: 0 });
       const response = await axios({
         url: `${baseUrl}/rat/${selectedMaze}/actions`,
         method: "GET",
@@ -211,7 +210,7 @@ const useAPI = () => {
           "X-API-KEY": apiKey,
         },
       });
-      setData({
+      setActionData({
         actions: [
           ...response.data.actions.sort(
             (a: Action, b: Action) =>
@@ -220,10 +219,13 @@ const useAPI = () => {
         ],
         score: response.data.score,
       });
+      return true;
     } catch (error: any) {
+      setActionData({ actions: [], score: 0 });
       toast({
         description: `${error}`,
       });
+      return false;
     } finally {
       setFetchingData(false);
     }
@@ -304,9 +306,9 @@ const useAPI = () => {
   };
 
   return {
-    data,
+    actionData,
     loading,
-    fetchData,
+    fetchActionData,
     updateBaseUrl,
     baseUrl,
     fetchMazeData,

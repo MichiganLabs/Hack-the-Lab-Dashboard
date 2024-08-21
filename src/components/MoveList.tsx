@@ -36,15 +36,15 @@ function TableItem(props: IndexedAction) {
   return (
     <TableRow
       style={{
-        backgroundColor: props.success ? "#1f2937" : "#7f1c1d",
+        backgroundColor: props.success ? "#1f2937" : "rgba(127, 28, 29, 0.5)",
       }}
     >
-      <TableCell className="rounded-l-md">
+      <TableCell>
         <span style={{}} className={`px-2 py-1 rounded-md text-white`}>
           {props.index}
         </span>
       </TableCell>
-      <TableCell className="rounded-l-md">
+      <TableCell>
         <span
           style={{ backgroundColor: CategoryColor[props.actionType] }}
           className={`px-2 py-1 rounded-md text-black`}
@@ -52,7 +52,7 @@ function TableItem(props: IndexedAction) {
           {props.actionType}
         </span>
       </TableCell>
-      <TableCell className="rounded-l-md">
+      <TableCell>
         <span
           style={{ backgroundColor: CategoryColor[props.actionType] }}
           className={`px-2 py-1 rounded-md text-black`}
@@ -63,7 +63,7 @@ function TableItem(props: IndexedAction) {
       <TableCell>
         {props.position.x}:{props.position.y}
       </TableCell>
-      <TableCell className="rounded-r-md">{`${props.success}`}</TableCell>
+      <TableCell>{`${props.success}`}</TableCell>
     </TableRow>
   );
 }

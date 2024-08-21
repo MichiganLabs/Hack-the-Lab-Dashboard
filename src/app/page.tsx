@@ -25,12 +25,24 @@ const Home = () => {
     height: mazeHeight,
     ref: mazeRef,
   } = useResizeDetector();
-  const actions = useMemo(() => api.data?.actions || [], [api.data]);
+  const actions = useMemo(() => api.actionData?.actions || [], [api.actionData]);
   const [sliderValue, setSliderValue] = useState(0);
   const [filteredData, setFilteredData] = useState<Action[]>([]);
 
   const isUpdateDisabled = api.loading || !api.apiKey || !api.baseUrl;
   const updateButtonClassName = `text-white px-4 py-2 rounded-md w-24 ${isUpdateDisabled ? "cursor-not-allowed bg-gray-500" : "cursor-pointer bg-blue-500"}`;
+  const [refreshInterval, setRefreshInterval] = useState(3 * 1000);
+
+  useEffect(() => {
+    if (refreshInterval && refreshInterval > 0) {
+      const interval = setInterval(async () => {
+        if (! await api.fetchActionData()) {
+          setRefreshInterval(0);
+        }
+      }, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [api, refreshInterval])
 
   const handleSliderChange = (e: { target: { value: any } }) => {
     setSliderValue(Number(e.target.value));
@@ -38,11 +50,11 @@ const Home = () => {
 
   useEffect(() => {
     handleSliderChange({ target: { value: actions.length - 1 } });
-  }, [actions.length, api.data]);
+  }, [actions.length, api.actionData]);
 
   useEffect(() => {
     setFilteredData([]);
-    if (!api.data || !actions) {
+    if (!api.actionData || !actions) {
       return;
     }
     if (actions[sliderValue] && actions[sliderValue].timeTs) {
@@ -53,7 +65,7 @@ const Home = () => {
       );
       setFilteredData(newFilteredData);
     }
-  }, [sliderValue, api.data, actions]);
+  }, [sliderValue, api.actionData, actions]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -119,9 +131,25 @@ const Home = () => {
           >
             Update
           </button>
+          <Select
+            onValueChange={(value) => setRefreshInterval(Number(value))}
+            value={refreshInterval.toString()}
+          >
+            <SelectTrigger className="bg-gray-800 w-24 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={`0`}>Off</SelectItem>
+              <SelectItem value={`${3 * 1000}`}>3s</SelectItem>
+              <SelectItem value={`${5 * 1000}`}>5s</SelectItem>
+              <SelectItem value={`${10 * 1000}`}>10s</SelectItem>
+              <SelectItem value={`${30 * 1000}`}>30s</SelectItem>
+              <SelectItem value={`${60 * 1000}`}>1m</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </header>
-      {api.data ? (
+      {api.actionData ? (
         <main className="flex-1 bg-gray-900 flex justify-center items-center p-4 h-[calc(100%-6rem)]">
           {api.me.role === "ADMIN" ? (
             <AdminView api={api} />
@@ -165,12 +193,12 @@ const Home = () => {
                       step={1}
                       className="w-full mb-4"
                     />
-                    {api.data ? (
+                    {api.actionData ? (
                       <MoveList
                         api={api}
                         tableData={filteredData}
                         resetMaze={api.resetMaze}
-                        score={api.data.score}
+                        score={api.actionData.score}
                       />
                     ) : null}
                   </div>
